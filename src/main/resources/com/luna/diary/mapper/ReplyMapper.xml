@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTO Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.luna.diary.mapper.ReplyMapper">
+
+	<!-- 인터페이스여서 delete update insert는 파라미터타입 생략할 수 있음 하지만 select는 resultType 
+		써야됨 -->
+
+	<!-- ===================댓글 등록===================== -->
+	<insert id="insert">
+		insert into tbl_reply (dno,reply,replyer)
+		values(#{dno},#{reply},#{replyer})
+
+	</insert>
+
+
+	<!-- ===================게시글 조회===================== -->
+
+	<select id="selectOne"
+		resultType="com.luna.diary.domain.ReplyVO">
+
+		select * from tbl_reply where rno = #{rno}
+
+	</select>
+
+
+	<!-- ===================댓글 삭제===================== -->
+
+	<delete id="delete">
+
+		delete from tbl_reply where rno = #{rno}
+
+	</delete>
+
+
+	<!-- ===================댓글 수정===================== -->
+
+	<update id="update">
+
+		update tbl_reply set reply= #{reply}, replyer= #{replyer}, updateDate=now()
+		where rno= #{rno}
+
+	</update>
+
+
+	<!-- ===================댓글 수정===================== -->
+
+	<select id="getReplyCount" resultType="int">
+		select count(rno) from tbl_reply where dno = #{dno}
+	</select>
+	
+	<select id="replyList" resultType ="com.luna.diary.domain.ReplyVO">
+	
+		select * from tbl_reply where dno = #{dno} limit #{skip}, 10
+	</select>
+
+
+
+</mapper>

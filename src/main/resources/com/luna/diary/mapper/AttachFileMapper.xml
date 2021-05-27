@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTO Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.luna.diary.mapper.AttachFileMapper">
+
+<insert id="insert">
+insert into tbl_attach (fileName,uploadPath,uuid,fileType,dno)
+values(#{fileName},#{uploadPath},#{uuid},#{fileType},#{dno})
+</insert>
+
+
+<delete id="delete">
+delete from tbl_attach where uuid = #{uuid}
+</delete>
+
+<delete id="deleteAll">
+delete from tbl_attach where dno = #{dno}
+</delete>
+
+<select id="findByDno" resultType="com.luna.diary.domain.AttachFileVO">
+select * from tbl_attach where dno = #{dno}
+</select>
+
+
+<select id="getOldFiles" resultType="com.luna.diary.domain.AttachFileVO">
+select * from tbl_attach where uploadPath = to_char(sysdate -1,yyyy/mm/dd)
+</select>
+
+
+
+</mapper>

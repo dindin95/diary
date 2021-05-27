@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTO Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.luna.diary.mapper.DiaryMapper">
+
+	<!-- 인터페이스여서 delete update insert는 파라미터타입 생략할 수 있음 하지만 select는 resultType 
+		써야됨 -->
+
+	<!-- ===================게시글 조회===================== -->
+	<select id="selectOne"
+		resultType="com.luna.diary.domain.DiaryVO">
+
+		select * from tbl_diary where dno = #{dno}
+
+	</select>
+
+
+	<!-- ===================게시글 등록===================== -->
+
+	<insert id="register">
+
+		<selectKey resultType="int" keyProperty="dno" order="AFTER">
+			<!-- AUTO_INCREMENT column의 값을 반환 -->
+			select last_insert_id()
+		</selectKey>
+
+		insert into tbl_diary(title,content,writer)
+		values(#{title},#{content},#{writer})
+	</insert>
+
+
+	<!-- ===================게시글 삭제===================== -->
+
+	<delete id="delete">
+
+		delete from tbl_diary where dno = #{dno}
+
+	</delete>
+
+
+	<!-- ===================게시글 수정===================== -->
+
+	<update id="modify">
+
+		update tbl_diary set title=#{title},
+		content=#{content}, writer=#{writer},
+		updatedate= now() where dno =
+		#{dno}
+
+
+	</update>
+	
+	
+	
+		<!-- =================== 검색조건 ===================== -->
+	<!-- ================필요한 부분 일부 보관================ -->
+
+	<sql id="search">
+		<where>
+			<if test="arr != null">
+				<foreach collection="arr" item="item" separator=" OR " open="(" close=")">		
+					<!-- db에 있는 내역 이니깐 title만 해도 알아서 찾음 -->
+					<if test="item == 't'.toString()">
+					<!--어쩌구저쩌구 키워드 어쩌구저쩌구 -->						
+						title like concat('%', #{keyword}, '%')	
+					</if>
+						<if test="item == 'c'.toString()">
+						content like concat('%', #{keyword}, '%')
+					</if>
+				</foreach>
+			</if>
+		</where>
+	</sql>
+	
+	
+	
+
+
+	<!-- ===================페이징 네이션 갯수===================== -->
+
+	<select id="getPageCount" resultType="int" parameterType="com.luna.common.dto.PageDTO">
+		select count(*) from tbl_diary
+	   <include refid="search"></include>
+	</select>
+
+
+	<!-- ===================페이지 리스트===================== -->
+	<!-- ==========include로 가져옴 이게 동적sql============= -->
+
+	<select id="getList" resultType="com.luna.diary.domain.DiaryVO" parameterType="com.luna.common.dto.PageDTO">
+		select * from tbl_diary
+		<include refid="search"></include>
+	    order by dno desc limit #{skip},#{perSheet}
+	</select>
+
+ 
+<update id="updateReplyCount">
+
+update tbl_diary set replyCount = replyCount + #{amount} where dno = #{dno}
+
+</update>
+
+ 
+
+
+</mapper>
